@@ -1,0 +1,166 @@
+提高+/省选-
+
+注意：本题时限修改至250ms，并且数据进行大幅度加强。本题强制开启O2优化，并且不再重测，请大家自己重新提交。
+由于Y校的老师非常毒瘤，要求zhouwc在csp考前最后3天参加期中考，zhouwc非常生气，决定消极考试，以涂完卡但全错为目标。现在retcarizy看zhouwc太可怜了，想要帮zhouwc解决一个问题，但他自己又太忙了，咕咕咕，于是就把问题甩给了你。
+
+题目描述
+给你一个长度为n的字符串S。
+
+有m个操作，保证m\le nm≤n。
+
+你还有一个字符串T，刚开始为空。
+
+共有两种操作。
+
+第一种操作：
+
+在字符串T的末尾加上一个字符。
+
+第二种操作：
+
+在字符串T的开头加上一个字符。
+
+每次操作完成后要求输出有几个l \in [1,T.size]l∈[1,T.size]满足以下条件：
+
+对于\forall i \in [1,l]?i∈[1,l]有T_{T.size-l+i} \ne S_{i}T 
+T.size?l+i
+?	
+  
+
+?	
+ =S 
+i
+?	
+ 
+
+Tip:Tip:字符串下标从1开始。T.sizeT.size表示T的长度。
+
+输入格式
+第一行两个正整数n,mn,m。
+
+第二行n个正整数，用空格隔开，第ii个整数表示S_iS 
+i
+?	
+ 。
+
+接下来mm行，每行两个数字opt,chopt,ch，opt=0opt=0表示在T的末尾加一个字符chch,opt=1opt=1表示在T的开头加一个字符chch。
+
+输出格式
+共mm行，每行一个非负整数表示第m操作后的输出。
+
+输入输出样例
+输入 #1 复制
+10 3
+1 2 3 1 2 3 2 3 2 3
+0 1
+1 2
+0 3
+输出 #1 复制
+0
+1
+1
+说明/提示
+注意：本题采用捆绑测试，只有当你通过一个subtask的所有点后，你才能拿到这个subtask的分数
+
+对于所有的数据 n \leq 10^6,m \leq 3.3333 \times 10^4,|\sum|\leq10^3,S_i \in [1,|\sum|]n≤10 
+6
+ ,m≤3.3333×10 
+4
+ ,∣∑∣≤10 
+3
+ ,S 
+i
+?	
+ ∈[1,∣∑∣]。(\sum∑表示字符集)
+
+subtask1(17\%)(17%):m \leq 333m≤333
+
+subtask2(33\%)(33%):m \leq 3333m≤3333
+
+subtask3(20\%)(20%):|\sum|\leq2∣∑∣≤2
+
+subtask4(30\%)(30%):无特殊条件
+
+样例解释：
+第一次操作后，T="1"T="1",
+
+l=1l=1时T[1]=S[1]T[1]=S[1]，所以答案为0
+
+第二次操作后，T="21"T="21",
+
+l=1l=1时，T[2]=S[1]T[2]=S[1]
+
+l=2l=2时，T[1]!=S[1]T[1]!=S[1],T[2]!=S[2]T[2]!=S[2]所以答案为1
+
+第三次操作后，T="213"T="213",
+
+l=1l=1时，T[3]!=S[1]T[3]!=S[1];
+
+l=2l=2时，T[2]=S[1]T[2]=S[1];
+
+l=3l=3时，T[3]=S[3]T[3]=S[3]所以答案为1
+
+思路：首先我没做过链表：除了LRU，所以用的数组
+第一把纯暴力17分（垃圾！）所以优化了一下，但是错了优化思路跟下面一致
+但是太麻烦了不知道哪里有问题。。这是一道找规律的题。。
+题解见下面大佬的，用的链表
+发现我们需要往前/往后插入元素，所以我们可以先预处理出整个T数组，然后记录当前T的左右端点，这样就不需要用什么数据结构来维护了
+发现题意其实就是要你求出有多少个L，满足S的前L个数和T的后L个数互不相等
+考虑加入每一个数的贡献：
+Case1:\ Case1:  往前面插入元素
+发现往T数组前面插入元素对我们已经满足条件的L不会产生影响，暴力扫一遍，看是不是整个T与S的前缀互不相等，在存入答案即可
+Case2:\ Case2:  往后面插入元素：
+首先，如果 S[1]=T[r]S[1]=T[r] 那么则说明 L=1L=1 的时候满足，我们需要加入答案
+对于插入前我们已经满足L，我们暴力扫一遍，如果 T[r]=S[r-i+1]T[r]=S[r?i+1] 了，则说明这个L已经不合法，删掉即可
+于是我们现在需要维护一个东西，支持快速插入，删除，遍历，我这里使用的链表
+然后存在一个坑点，最好先把链头设成虚拟节点，否则的话如果删掉链头需要更新（我这里采用的是后者）
+最后，由于改了题的限制时间，缩短了，所以以上70分。
+
+上代码：
+#include<bits/stdc++.h>
+using namespace std;
+#define il inline
+#define re register
+il int read() {
+    re int x = 0, f = 1; re char c = getchar();
+    while(c < '0' || c > '9') { if(c == '-') f = -1; c = getchar();}
+    while(c >= '0' && c <= '9') x = x * 10 + c - 48, c = getchar();
+    return x * f;
+}
+#define rep(i , a , b) for(int i = (a) , i##Limit = (b) ; i <= i##Limit ; ++ i)
+#define maxn 1000006
+int n, m, a[maxn], Ans, nxt[maxn], pre[maxn], opt[maxn], w[maxn], b[maxn], x, l, r, t;
+il void del(int x) {
+    nxt[pre[x]] = nxt[x], pre[nxt[x]] = pre[x];
+}
+il void solve2() {
+    for(re int i = t; i; i = nxt[i]) { 
+        if(b[r] == a[r - i + 1]) {
+            del(i), -- Ans;
+            if(t == i) t = nxt[i];
+        }
+    }
+    if(b[r] != a[1]) pre[t] = r, nxt[r] = t, t = r, ++ Ans;
+}
+il void solve() {
+    rep(i, l, r) if(a[i - l + 1] == b[i]) return;
+    pre[t] = l, nxt[l] = t, t = l, ++ Ans;
+}
+signed main() {
+    n = read(), m = read();
+    rep(i, 1, n) a[i] = read();
+    rep(i, 1, m) opt[i] = read(), w[i] = read(), x += opt[i];
+    l = x + 1, r = x;
+    rep(i, 1, m) {
+        if(opt[i] == 1) b[-- l] = w[i];
+        else b[++ r] = w[i];
+    }
+    l = x + 1, r = x;
+    rep(i, 1, m) {
+        if(i == 1) {opt[i] == 1 ? -- l : ++ r; solve();}
+        else if(opt[i] == 1) -- l, solve();
+        else ++ r, solve2();
+        printf("%d\n", Ans);
+    }
+    return 0;
+}

@@ -1,0 +1,331 @@
+提高+/省选-
+
+Sunny 有个 npynpy 叫做小 \mathrm{b}b。
+
+小 \mathrm{b}b 的生日就要到了，\mathrm{Sunny}Sunny 想给她买一些礼物。
+
+题目描述
+商店里摆着琳琅满目的商品，每个商品都有：
+
+编号，从左到右依次为 1,2,\dots n1,2,…n。
+
+种类，分别为 p_1,p_2,\dots p_np 
+1
+?	
+ ,p 
+2
+?	
+ ,…p 
+n
+?	
+ 。
+
+价值，分别为 v_1,v_2,\dots v_nv 
+1
+?	
+ ,v 
+2
+?	
+ ,…v 
+n
+?	
+ 。
+
+\mathrm{Sunny}Sunny 想从中挑选一个区间，将这个区间里的所有礼物买下来送给小 \mathrm{b}b。
+
+小 \mathrm{b}b 会从右往左依次查看 \mathrm{Sunny}Sunny 送给他的礼物，如果她看到同一种类的礼物出现了 kk 次，那么她就不会再去查看这种礼物（包括第 kk 个），当然，这些礼物也就失去了原本的价值。
+
+现在，\mathrm{Sunny}Sunny 给你了 mm 个区间，想让你求出在小 \mathrm{b}b 眼中，这个区间的价值。
+
+具体的价值计算见样例。
+
+输入格式
+第一行由空格隔开的三个正整数 n,m,kn,m,k。
+
+第二行 nn 个由空格隔开的正整数，第 ii 个数代表 p_ip 
+i
+?	
+ 。
+
+第三行 nn 个由空格隔开的正整数，第 ii 个数代表 v_iv 
+i
+?	
+ 。
+
+接下来 mm 行，第 ii 行两个正整数 l_i,r_il 
+i
+?	
+ ,r 
+i
+?	
+ ，表示第 ii 次询问的区间。
+
+输出格式
+输出 mm 行，对于每一个询问，输出一行一个整数 vv，为这个区间在小 \mathrm{b}b 眼中的价值。
+
+输入输出样例
+输入 #1 复制
+6 11 3
+1 1 1 2 1 3
+7 3 8 9 6 5
+1 1
+1 2
+1 3
+1 4
+1 5
+1 6
+2 6
+3 6
+4 6
+5 6
+6 6
+输出 #1 复制
+7
+10
+11
+20
+23
+28
+28
+28
+20
+11
+5
+说明/提示
+样例说明
+[1,1]:7[1,1]:7。
+
+[1,2]:3+7=10[1,2]:3+7=10。
+
+[1,3]:8+3=11[1,3]:8+3=11，因为编号为 11 的礼物种类为 11，这是种类 11 出现的第 k(k=3)k(k=3) 次，所以她不会再看这种礼物（包括这个）。
+
+[1,4]:9+8+3=20[1,4]:9+8+3=20。
+
+[2,6]:5+6+9+8=28[2,6]:5+6+9+8=28。
+
+[3,6]:5+6+9+8=28[3,6]:5+6+9+8=28。
+
+数据范围与约定
+测试点 1-4:n\leq 100,m\leq 1001?4:n≤100,m≤100。
+
+测试点 5-6:n\leq 5000,m\leq 50005?6:n≤5000,m≤5000。
+
+测试点 7-10:n\leq 2\times 10^4,m\leq 10^47?10:n≤2×10 
+4
+ ,m≤10 
+4
+ 。
+
+测试点 11-15:n\leq 2\times 10^5,m\leq 2\times 10^511?15:n≤2×10 
+5
+ ,m≤2×10 
+5
+ 。
+
+测试点 16-20:n\leq 10^6,m\leq 5\times 10^516?20:n≤10 
+6
+ ,m≤5×10 
+5
+ 。
+
+对于测试点 1,2,7,8,11,12,16,171,2,7,8,11,12,16,17，有 k=nk=n，其余测试点有 2\leq k<n2≤k<n。
+
+对于所有测试点，有 1\leq p_i\leq n,1\leq v_i\leq 2000,1\leq l \leq r \leq n1≤p 
+i
+?	
+ ≤n,1≤v 
+i
+?	
+ ≤2000,1≤l≤r≤n。
+
+对于测试点 1-101?10，每个 33 分。
+
+对于测试点 11-2011?20 中 k=nk=n 的，每个 44 分。
+
+其余测试点每个 99 分。
+
+对于测试点 1-61?6，时间限制 500ms500ms。
+
+对于测试点 7-157?15，时间限制 750ms750ms。
+
+对于测试点 16-2016?20，时间限制 1.5s1.5s。
+
+对于所有测试点，空间限制 128MB128MB。
+
+思路：本题主要考察树状数组（数据结构）和离线回答询问
+
+暴力分： 18\%-30\%18%?30%
+
+Sol\ 1:18\%-30\%Sol 1:18%?30%
+
+\Theta(n^2)Θ(n 
+2
+ ) 暴力，如果你运气好能拿到 50\%50%
+
+部分代码（第 99 个测试点跑了 498ms498ms ）：
+
+for(int i=1;i<=m;i++){
+    int l=read(),r=read(),ans=0;
+    memset(cnt,0,sizeof(cnt));
+    for(int j=r;j>=l;j--){
+        cnt[p[j]]++;
+        if(cnt[p[j]]<k)ans+=v[j];
+    }
+    cout<<ans<<endl;
+}
+Sol\ 2:28\%Sol 2:28%
+
+对于所有 k=nk=n 的测试点，前缀和暴力回答询问即可
+
+特判一下所有 p_ip 
+i
+?	  都相等的情况
+
+部分代码：
+
+for(int i=1;i<=n;i++)
+    p[i]=read(),cnt[p[i]]++;
+for(int i=1;i<=n;i++)
+    v[i]=read(),sum[i]=sum[i-1]+v[i];
+for(int i=1;i<=m;i++){
+    int l=read(),r=read();
+    if(l==1&&r==n&&cnt[p[1]]>=k)
+        cout<<sum[n]-v[1]<<endl;
+    else cout<<sum[r]-sum[l-1]<<endl;
+}
+Sol\ 3:34\%-46\%Sol 3:34%?46%
+
+结合 Sol\ 1,2Sol 1,2 可得到 34\%-46\%34%?46% 的高分
+
+代码不贴了
+
+Sol\ 4:100\%Sol 4:100%
+
+前置知识：树状数组，如果您不会，请先移步 P3374P3374
+
+正解：将所有询问离线，用树状数组维护
+
+记第 ii 次询问的答案为 ans_ians 
+i
+?	 
+
+从左往右依次扫过每个礼物，假设现在扫到了第 ii 个礼物，它的种类为 jj ，它是第 jj 种礼物出现的第 xx 次
+
+如果 x\ge kx≥k ，那就意味着第 jj 种礼物中的第 x-k+1x?k+1 个完全失去了它的价值，记该礼物的编号为 yy
+
+因为我们是从左往右计算，所以如果询问的右端点 \ge i≥i ，那么小 \mathrm{a}a 在看到第 yy 个礼物之前肯定至少看了 k-1k?1 个第 jj 种礼物，就不会看第 yy 个礼物，我们就可以把它的价值当做 00 ，即 v_y=0v 
+y
+?	 =0
+
+然后我们就可以计算出所有右端点在 ii 上的询问，假设该询问的左端点为 ll ，编号为 cc ，则 ans_c=\sum_{d=l}^{i}v[d]ans 
+c
+?	 =∑ 
+d=l
+i
+?	 v[d]
+
+这就将题目转化为了一个 单点修改，区间查询 的题目，用树状数组维护即可（线段树常数过大）
+
+时间复杂度 \Theta(n\log n)Θ(nlogn)
+
+代码各部分具体实现原理如下：（一一对应）
+
+p[] 1 1 1 2 1 3	代表商品种类
+v[] 7 3 8 9 6 5	对应商品价值
+t: 17 23 38 49 56 65 树状数组保存种类价值对应关系
+l[] 1 1 1 1 1 1 2 3 4 5 6	代表区间开始地址
+q[1] 1 2 3 4 5 6	区间结束地址放到开始地址后
+q[2] 6
+q[3] 6
+q[4] 6
+q[5] 6
+q[6] 6
+pos[1] 1 2 3 5	记录商品种类出现次数
+pos[2] 4
+pos[3] 6
+当pos[1]取到3时，改变t，1对应数值-7
+即 t: 10 23 38 49 56 65
+此时正好是遍历的第三次，结果把区间的累加和-7就是这次运行结束的输出结果
+此后同理
+
+上代码：
+#include<iostream>
+#pragma warning(disable:4996)
+#include<cstring>
+#include<cstdio>
+#include<algorithm>
+#include <vector>
+#include <queue>
+#include <map>
+#include <math.h>
+typedef long long ll;
+typedef long double ld;
+using namespace std;
+using namespace std;
+inline int read()
+{
+	int x = 0; char s = getchar();
+	while (!isdigit(s))s = getchar();
+	while (isdigit(s))x = (x << 1) + (x << 3) + (s ^ 48), s = getchar();
+	return x;
+}
+inline void print(int x)
+{
+	if (x < 10)putchar(x + '0');
+	else {
+		print(x / 10);
+		putchar(x % 10 + '0');
+	}
+}
+const int N = 1e6 + 5;
+int n, m, k, p[N], v[N], l[N], ans[N];
+vector <int> pos[N], q[N];
+//pos[i] 存储第 i 种礼物的编号，q[i] 存储右端点在 i 上的询问编号
+struct BIT//树状数组
+{
+	int c[N];
+	int lowbit(int x) { return x & (-x); }//树状数组基本操作
+	void add(int x, int y)//在第 x 位上加上 y
+	{
+		while (x <= n) {
+			c[x] += y;
+			x += lowbit(x);
+		}
+	}
+	int query(int x)//查询前缀和
+	{
+		int sum = 0;
+		while (x) {
+			sum += c[x];
+			x -= lowbit(x);
+		}
+		return sum;
+	}
+}t;
+int main()
+{
+	n = read(), m = read(), k = read();
+	for (int i = 1; i <= n; i++)
+		p[i] = read();
+	for (int i = 1; i <= n; i++)
+		v[i] = read(), t.add(i, v[i]);
+	for (int i = 1; i <= m; i++) {
+		int r;
+		l[i] = read(), r = read();
+		q[r].push_back(i);//记录右端点在 r 上的所有询问编号
+	}
+	for (int i = 1; i <= n; i++) {
+		pos[p[i]].push_back(i);//记录第 p[i] 中礼物的位置
+		if (pos[p[i]].size() >= k) {//如果第 p[i] 种礼物出现了不小于 k 次
+			int del_id = pos[p[i]][pos[p[i]].size() - k];//找到礼物位置
+			t.add(del_id, -v[del_id]);//删掉，即 v[del_id]=0
+		}
+		for (int j = 0; j < q[i].size(); j++) {
+			int id = q[i][j];//询问编号
+			ans[id] = t.query(i) - t.query(l[id] - 1);//区间求和，即答案
+		}
+	}
+	for (int i = 1; i <= m; ++i)
+		print(ans[i]), putchar('\n');
+	return 0;
+}

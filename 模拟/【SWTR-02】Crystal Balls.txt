@@ -1,0 +1,295 @@
+普及+/提高
+
+Ethan 有一些可以释放强大能量的水晶球，他将要用这些水晶球合成可以消灭敌人的魔法。
+
+a\equiv b\mathrm{\ (mod\ m)}a≡b (mod m) 表示 aa 和 bb 对模 mm 同余，即 (a-b)/m(a?b)/m 为整数。
+（已新增一组样例）
+
+题目描述
+\mathrm{Ethan}Ethan 有 nn 个水晶球，现在他将这些水晶球排成一行，每一个水晶球上面有一个能量值，且要么是绿色，要么是紫色。
+
+下文中，PP 代表紫色，GG 代表绿色。
+\mathrm{Ethan}Ethan 现在要按以下方式取走这些水晶球：
+
+取走最左端的水晶球。
+
+假设取走的水晶球的颜色为 c_1c 
+1
+?	
+ ，能值为 x_1x 
+1
+?	
+ ，剩余最左端的水晶球的颜色为 c_2c 
+2
+?	
+ ，能量为 x_2x 
+2
+?	
+ ，取出水晶的次数为 cntcnt（包括这一次）。
+
+如果 c_1=c_2c 
+1
+?	
+ =c 
+2
+?	
+ ，那么 \mathrm{Ethan}Ethan 会将这两个水晶球合成为一个大水晶球（本次取出的水晶球仍计入答案总数内，详情见样例），颜色为 c_1c 
+1
+?	
+ ，能量值为 x_1 \times x_2x 
+1
+?	
+ ×x 
+2
+?	
+ ，放在水晶球序列的最左端。
+
+如果，c_1=P,c_2=G,cnt\equiv 1\mathrm{\ (mod\ 2)}c 
+1
+?	
+ =P,c 
+2
+?	
+ =G,cnt≡1 (mod 2)，那么 \mathrm{Ethan}Ethan 会将剩下的水晶球的颜色反转（即绿色变紫色，紫色变绿色）。
+
+如果仍不能满足上面的条件，那么 \mathrm{Ethan}Ethan 会将剩下的水晶球序列翻转。
+
+就这样，直到最后只剩下一个球，此时 \mathrm{Ethan}Ethan 会直接取走最后一个球，求取走的水晶球的能量值之和。
+
+由于答案很大，请对 pp 取模。
+
+输入格式
+第一行，两个正整数 n,pn,p，分别表示水晶球的个数和模数。
+
+第二行，nn 个正整数 a_1,a_2,\dots,a_na 
+1
+?	
+ ,a 
+2
+?	
+ ,…,a 
+n
+?	
+ ，a_ia 
+i
+?	
+  表示第 ii 个水晶球的能量值。
+
+第三行，一个由字符 PP 和字符 GG 组成的字符串，如果第 ii 个字符为P，那么该水晶球是紫色，否则为绿色。
+
+输出格式
+一个整数，表示取走的水晶球的能量值之和对 pp 取模的值。
+
+输入输出样例
+输入 #1 复制
+4 998244353
+1 2 3 4
+GPGG
+输出 #1 复制
+19
+输入 #2 复制
+3 998244353
+3 7 5
+PGG
+输出 #2 复制
+45
+输入 #3 复制
+10 998244353
+12345 23456 34567 45678 56789 67890 78901 89012 90123 101234
+GPPGPGGGPG
+输出 #3 复制
+104157290
+说明/提示
+样例说明
+样例 11：
+
+\mathrm{Ethan}Ethan 首先会取出最左端的水晶球，颜色为 G，答案加上它上面所写上的数字，即 11，剩下的水晶球翻转，序列变为 4\ 3\ 24 3 2 GGP。（因为 c_1=G,c_2=Pc 
+1
+?	
+ =G,c 
+2
+?	
+ =P，取出水晶球的次数为奇数，不满足条件 1,21,2，所以序列翻转）。
+
+再取出最左端的水晶球，颜色为 G，答案加上 44，接着把剩下来最左端的水晶球与取走的水晶球合并成一个大的水晶球，写上的数字为 1212，序列变为 12\ 212 2 GP。
+
+取出最左边的水晶球，颜色为 G，答案加上 1212，剩下的水晶球序列翻转，序列变为 22 P。
+
+取出最后一个的水晶球，答案加上 22，最终答案为 1+4+12+2=191+4+12+2=19。
+
+样例 22：
+
+先取出 33，c_1=P,c_2=G,cnt=1c 
+1
+?	
+ =P,c 
+2
+?	
+ =G,cnt=1，颜色翻转
+
+取出 77，c_2=c_3=Pc 
+2
+?	
+ =c 
+3
+?	
+ =P，将 x_3x 
+3
+?	
+  乘上 x_2x 
+2
+?	
+ ，得到 x_3=35x 
+3
+?	
+ =35
+
+取出 3535，最终答案为 3+7+35=453+7+35=45
+
+数据范围与约定
+本题采用 \mathrm{Subtask}Subtask 制。
+
+\mathrm{Subtask}\ 1:n\leq 2000,a_i\leq 10^9,p\leq 10^9,15\%Subtask 1:n≤2000,a 
+i
+?	
+ ≤10 
+9
+ ,p≤10 
+9
+ ,15%。
+
+\mathrm{Subtask}\ 2:n\leq 5\times 10^4,a_i\leq 10^9,p\leq 10^9,15\%Subtask 2:n≤5×10 
+4
+ ,a 
+i
+?	
+ ≤10 
+9
+ ,p≤10 
+9
+ ,15%。
+
+\mathrm{Subtask}\ 3:n\leq 5\times 10^4,a_i\leq 10^{18},p\leq 10^{18},20\%Subtask 3:n≤5×10 
+4
+ ,a 
+i
+?	
+ ≤10 
+18
+ ,p≤10 
+18
+ ,20%。
+
+\mathrm{Subtask}\ 4:n\leq 10^6,a_i\leq 10^9,p\leq 10^9,20\%Subtask 4:n≤10 
+6
+ ,a 
+i
+?	
+ ≤10 
+9
+ ,p≤10 
+9
+ ,20%。
+
+\mathrm{Subtask}\ 5:n\leq 10^6,a_i\leq 10^{18},p\leq 10^{18},30\%Subtask 5:n≤10 
+6
+ ,a 
+i
+?	
+ ≤10 
+18
+ ,p≤10 
+18
+ ,30%。
+
+对于所有测试点，时间限制 1s1s，空间限制 16MB16MB。
+
+思路：首先想到的就是暴力，然后一大堆数据超时了，还有WA的，不知道哪里审错题了，模拟的一题，就是麻烦
+
+本来想开 300ms300ms 时限卡掉 \loglog 快速乘和 \mathrm{cin}cin 的，后来一想做人不能像 \mathrm{CSP-S\ D1T3}CSP?S D1T3 出题人一样毒瘤，于是开大了时限
+
+让我们一起赞美良心出题人吧！
+
+本题主要考察的是快速乘（因为两个 \mathrm{long\ long}long long 相乘会溢出）和带有技巧的暴力
+
+暴力分： 15\%15%
+
+如何表示颜色反转？
+用一个变量 (mask)(mask) 表示当前序列颜色是否反转 (0=N,1=Y)(0=N,1=Y) ，初始值为 00
+
+如果颜色反转，就将 maskmask 异或 11 （即 00 变为 11 ， 11 变为 00 ） 即可
+
+如何表示这个序列？
+用两个变量 (head,tail)(head,tail) 表示当前序列的首和尾，初始值分别为 1,n1,n
+
+再用一个变量 (dir)(dir) 表示当前的方向，初始值为 11
+
+每次从序列里面取出水晶球，就将 headhead 加上 dirdir
+
+如果序列翻转，就将 head,tailhead,tail 互换， dir=-dirdir=?dir （即 11 变为 -1?1 ， -1?1 变为 11 ）
+
+有意思的是，这并不是原来的题面
+
+在一次巧合中，出题人们发现了：在原来的题意下，最多只会有 22 次翻转
+
+然后我们紧急修改了题面
+
+让我们一起赞美良心出题人吧！
+
+代码：最慢的一个测试点约 150ms
+
+上代码：
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long
+#define ld long double
+inline ll read()
+{
+    ll x=0,sign=1;char s=getchar();
+    while(!isdigit(s)){if(s=='-')sign=-1;s=getchar();}
+    while(isdigit(s))x=(x<<1)+(x<<3)+(s^48),s=getchar();
+    return x*sign;
+}
+inline void print(ll x)
+{
+    if(x<10)putchar(x+'0');
+    else{
+        print(x/10);
+        putchar(x%10+'0');
+    }
+}
+const int N=1e6+5;
+ll n,mod,a[N],ans;
+int head,tail,mask,dir=1;
+char s[N];
+inline void mult(ll &x,ll y){x=(x*y-(ll)((ld)x/mod*y)*mod+mod)%mod;}
+inline void add(ll &x,ll y){x=(x+y)%mod;}
+bool id(char x){return x=='G';}
+int main()
+{
+    n=read(),mod=read();
+    for(int i=1;i<=n;i++)
+        a[i]=read();
+    scanf("%s",s+1);
+    head=1,tail=n;
+    for(int i=1;i<n;i++){
+        add(ans,a[head]);
+        ll c1=id(s[head])^mask,c2=id(s[head+dir])^mask;
+        if(c1==c2){
+            mult(a[head+dir],a[head]);
+            head+=dir;
+        }
+        else if(c1==0&&c2==1&&i%2){
+            mask^=1;
+            head+=dir;
+        }
+        else{
+            head+=dir;
+            dir=-dir;
+            swap(head,tail);
+        }
+    }
+    add(ans,a[head]);
+    print(ans);
+    return 0;
+}

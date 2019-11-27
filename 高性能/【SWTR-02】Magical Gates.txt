@@ -1,0 +1,277 @@
+思路：首先想到的是在给定函数基础上通过一次遍历（利用位1的个数方法）
+缩短时间，然后依次输入输出遍历出结果
+注意在处理大数时，加法可以取完模再加上作为结果（不会太大）
+而乘法需要每一步都对当前结果取模
+最后输出结果即可。（23分）
+
+上代码:
+#include<iostream>
+#pragma warning(disable:4996)
+#include<cstring>
+#include<cstdio>
+#include<algorithm>
+#include <vector>
+#include <queue>
+#include <map>
+#include <math.h>
+typedef long long ll;
+typedef long double ld;
+using namespace std;
+#define INF 0x3f3f3f3f
+#define MOD 100000000
+#define debug() printf("Tairitsu Go PM!\n")
+inline ll read()
+{
+	ll x = 0; char s = getchar();
+	while (!isdigit(s))s = getchar();
+	while (isdigit(s))x = (x << 1) + (x << 3) + (s ^ 48), s = getchar();
+	return x;
+}//实现所有直接输入，可无视空格及回车
+inline void print(ll x)
+{
+	if (x < 10)putchar(x + '0');
+	else {
+		print(x / 10);
+		putchar(x % 10 + '0');
+	}
+}//输出存在空格或回车需自行输出
+
+int hammingWeight(ll n) {
+	int i = 0;
+	while (n > 0) {
+		if (n & 1) {
+			i++;
+		}
+		n >>= 1;
+	}
+	return i;
+}
+
+int main() {
+	vector<int> curr;
+	ll t = read();
+	ll p = read();
+	ll n = read();
+	for (ll i = 0; i < t; i++) {
+		ll l = read();
+		ll r = read();
+		ll aim = 0;
+		ll aimmodtwo = 1;
+		for (ll j = l; j <= r; j++)
+			aim += hammingWeight(j) % p;
+		for (ll j = l; j <= r; j++) {
+			aimmodtwo *= hammingWeight(j);
+			aimmodtwo %= p;
+		}
+		print(aim);
+		printf(" ");
+		print(aimmodtwo);
+		printf("\n");
+	}
+
+}
+
+满分思路如下：
+前置知识：高精，欧拉定理，数位 \mathrm{DP}DP
+
+在下文中， x_{(2)}x 
+(2)
+?	  表示 xx 在二进制下表示的数
+我们考虑数位 \mathrm{DP}DP
+
+dp_idp 
+i
+?	  表示在 [1,x][1,x] 中，二进制下 11 的个数为 ii 个的数有多少个，然后将 [1,r][1,r] 的结果减去 [1,l)[1,l) 的结果就是 [l,r][l,r] 的结果，最后的答案就是 \sum_{i=1}^{k}i\times dp_i∑ 
+i=1
+k
+?	 i×dp 
+i
+?	  和 \prod_{i=1}^{k}i^{dp_i}∏ 
+i=1
+k
+?	 i 
+dp 
+i
+?	 
+ 
+
+\large Q1:Q1:
+
+如何计算区间 [1,x][1,x] 的 dp_idp 
+i
+?	  ？
+
+\large A1:A1:
+
+设 x_{(2)}x 
+(2)
+?	  一共有 kk 位，从左往右遍历 x_{(2)}x 
+(2)
+?	  的每一位（只有可能为 00 或 11 ）
+
+如果该位为 00 ：跳过，不考虑
+
+如果该位为 11 ：将该位为 00 ，右边的位为任意值 的情况讨论到答案中，这样保证了不会 少计算/多计算/重复计算，且在接下来的讨论中，将该位的值看作为 11
+
+即设当前考虑到第 j(j\in[1,k])j(j∈[1,k]) 位（从右往左数），设该位左边共有 cntcnt 个 11
+
+对于所有 dp_{i+cnt}(i\in[0,j))dp 
+i+cnt
+?	 (i∈[0,j)) ，加上 \binom{i}{j-1}( 
+j?1
+i
+?	 ) ，最后再将 cntcnt 加 11
+
+遍历过所有位之后，还要将 x_{(2)}x 
+(2)
+?	  本身的答案算进去，即 dp_{cnt}dp 
+cnt
+?	  加 11
+Q2:Q2:
+为什么我按照 A1A1 的方法做，却 \color{red}\mathrm{WA}WA 掉了？
+
+\large A2:A2:
+
+因为求积的 dp_idp 
+i
+?	  在指数的位置上，且 pp 为质数，所以该部分的 dp_idp 
+i
+?	  应对 \varphi(p)=p-1φ(p)=p?1 取模，而不是 pp
+
+同样的，上式 dp_{i+cnt}(i\in[0,j))+\binom{i}{j-1}dp 
+i+cnt
+?	 (i∈[0,j))+( 
+j?1
+i
+?	 ) 中的 \binom{i}{j-1}( 
+j?1
+i
+?	 ) 也应对 p-1p?1 取模
+
+\large Q3:Q3:
+
+为什么我按照 A1,A2A1,A2 的方法做，却 \color{#0000AA}\mathrm{TLE}TLE 了？
+
+\large A3:A3:
+
+可以先 \Theta(\log^2 n)Θ(log 
+2
+ n) 预处理出 \binom{i}{j}( 
+j
+i
+?	 ) 对 pp 和 p-1p?1 取模的值，计算的时候就不需要再 \Theta(\log n)Θ(logn) 处理了（虽然先预处理出阶乘和阶乘逆元也不错，但是常数较大）
+
+千万别小看这个 \Theta(\log n)Θ(logn) ，因为 nn 有可能到 10^{1000}10 
+1000
+  ，所以 \max\log n\approx 1000\times \log(10)\approx3322maxlogn≈1000×log(10)≈3322
+
+\large Q4:Q4:
+
+这个算法的时间复杂度是多少？
+
+\large A4:A4:
+
+一次 A1A1 操作时间复杂度 \Theta(\log^2n)Θ(log 
+2
+ n) ，共 2T2T 次操作且 TT 为常数，预处理 \Theta(\log^2n)Θ(log 
+2
+ n) ，总时间复杂度 \Theta(\log^2n)Θ(log 
+2
+ n)
+
+\large Q5:Q5:
+
+说了这么多废话，赶紧把代码拿出来
+
+\large A5:A5:
+
+上代码：
+
+#include<bits/stdc++.h>
+using namespace std;
+#define ll long long
+const int N=3333; 
+ll ksm(ll a,ll b,ll p){ll ans=1;while(b){if(b&1)ans=(ans*a)%p;b>>=1,a=(a*a)%p;}return ans;}
+ll t,p,p2,n,k,add[N][N],mult[N][N],prod[N],sum[N];
+bool bit[N];//二进制
+string l,r;
+void change(string s,bool minus)//将字符串转成二进制数，minus 为是否减 1（计算l时需要）
+{
+    k=0;
+    int l=s.size()-1,p[N],high=l;
+    for(int i=l;i>=0;i--)p[i]=s[l-i]-'0';//高精度
+    if(minus){
+        p[0]--;
+        int pos=0;
+        while(p[pos]<0)p[pos+1]--,p[pos]+=10,pos++;
+        if(!p[high])high--;
+    }
+    while(high>=0){
+        k++;
+        int res=0;
+        for(int i=high;i>=0;i--){
+            res=res*10+p[i];
+            p[i]=res/2;
+            res%=2;
+        }
+        bit[k]=res;
+        if(!p[high])high--;
+    }
+}
+void solve()//一组数据
+{
+    memset(sum,0,sizeof(sum));
+    memset(prod,0,sizeof(prod));
+    cin>>l>>r;
+    change(r,0);
+    int cnt=0;
+    for(int j=k;j>0;j--)
+        if(bit[j]){
+            for(int i=0;i<j;i++)
+                sum[i+cnt]=(sum[i+cnt]+add[j-1][i])%p,
+                prod[i+cnt]=(prod[i+cnt]+mult[j-1][i])%p2;
+            cnt++;
+        }
+    sum[cnt]++,prod[cnt]++;//计算[1,r]
+    change(l,1),cnt=0;
+    for(int j=k;j>0;j--)
+        if(bit[j]){
+            for(int i=0;i<j;i++)
+                sum[i+cnt]=(sum[i+cnt]-add[j-1][i]+p)%p,
+                prod[i+cnt]=(prod[i+cnt]-mult[j-1][i]+p2)%p2;
+            cnt++;
+        }
+    sum[cnt]=(sum[cnt]-1+p)%p,prod[cnt]=(prod[cnt]-1+p2)%p2;//减去[1,l)
+}
+void init()
+{
+    cin>>t>>p>>n,p2=p-1;
+    int lim;
+    if(n<18)lim=64;
+    else if(n<21)lim=333;
+    else lim=3333;//避免浪费时间和空间
+    add[0][0]=mult[0][0]=1;
+    for(int i=1;i<lim;i++){
+        add[i][0]=mult[i][0]=1;
+        for(int j=1;j<=i;j++){
+            add[i][j]=(add[i-1][j]+add[i-1][j-1])%p;
+            mult[i][j]=(mult[i-1][j]+mult[i-1][j-1])%p2;
+        }
+    }//预处理出组合数
+}
+int main()
+{
+    init();
+    for(ll i=1;i<=t;++i){
+        solve();
+        ll ans=0;
+        for(ll j=1;j<N;j++)
+            ans=(ans+sum[j]*j)%p;
+        cout<<ans<<" ";
+        ans=1;
+        for(ll j=1;j<N;j++)
+            ans=(ans*ksm(j,prod[j],p))%p;//这里是对 p 取模，因为已经在算最终的答案了
+        cout<<ans<<endl;
+    }
+    return 0;
+}

@@ -1,0 +1,72 @@
+普及/提高-
+
+题目描述
+输入 nn(n<5000000n<5000000 且 nn 为奇数) 个数字 a_i(0<a_i<10^9)a 
+i
+​	
+ (0<a 
+i
+​	
+ <10 
+9
+ ) ，输出这些数字的第 kk 小的数。最小的数是第 0 小。
+
+输入格式
+无
+
+输出格式
+无
+
+输入输出样例
+输入 #1 复制
+5 1
+4 3 2 1 5
+输出 #1 复制
+2
+
+思路：入门赛倒第二题，优先队列
+直接遍历数据放入优先队列，然后出队直到队长等于k + 1，返回堆顶元素即可
+
+上代码：
+#include<iostream>
+#pragma warning(disable:4996)
+#include<cstring>
+#include<cstdio>
+#include<algorithm>
+#include <vector>
+#include <queue>
+#include <map>
+#include <math.h>
+typedef long long ll;
+typedef long double ld;
+using namespace std;
+#define INF 0x3f3f3f3f
+#define MOD 100000000
+#define debug() printf("Tairitsu Go PM!\n")
+const int mod = 1e9 + 7;
+inline int read()
+{
+	int x = 0; char s = getchar();
+	while (!isdigit(s))s = getchar();
+	while (isdigit(s))x = (x << 1) + (x << 3) + (s ^ 48), s = getchar();
+	return x;
+}//实现所有直接输入，可无视空格及回车
+inline void print(int x)
+{
+	if (x < 10)putchar(x + '0');
+	else {
+		print(x / 10);
+		putchar(x % 10 + '0');
+	}
+}//输出存在空格或回车需自行输出
+int main() {
+	priority_queue<int> q;
+	int n = read(), k = read();
+	for (int i = 0; i < n; i++) {
+		int a = read();
+		q.push(a);
+	}
+	while(q.size() > k + 1)
+		q.pop();
+	cout << q.top();
+}

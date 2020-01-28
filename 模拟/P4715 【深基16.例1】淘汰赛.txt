@@ -1,0 +1,54 @@
+普及/提高-
+
+题目描述
+有 2^n(n\le7)2 
+n
+ (n≤7) 个国家参加世界杯决赛圈且进入淘汰赛环节。
+我经知道各个国家的能力值，且都不相等。
+能力值高的国家和能力值低的国家踢比赛时高者获胜。
+1 号国家和 2 号国家踢一场比赛，胜者晋级。
+3 号国家和 4 号国家也踢一场，胜者晋级……
+晋级后的国家用相同的方法继续完成赛程，直到决出冠军。
+给出各个国家的能力值，请问亚军是哪个国家？
+
+输入格式
+无
+
+输出格式
+无
+
+输入输出样例
+输入 #1 复制
+3
+4 2 3 1 10 5 9 7
+输出 #1 复制
+1
+
+思路：直接取数组左半区间最大值和右半区间最大值比较返回笑着对应编号即可
+（写了半天不知道写的什么）
+
+上代码：
+#include <iostream>
+#include <cmath>
+#define N 1000
+using namespace std;
+typedef long long ll;
+ll a[N];
+ll n,maxl1=-1,maxt1,maxl2=-1,maxt2;
+int main(){
+    register int i,j;
+    cin>>n;
+    n=pow(2,n);
+    for(i=1;i<=n;i++){
+        cin>>a[i];
+        if(i<=n/2){
+            if(a[i]>maxl1)maxl1=a[i],maxt1=i;
+        }
+        else{
+            if(a[i]>maxl2)maxl2=a[i],maxt2=i;
+        }
+    }
+    if(maxl1>maxl2)cout<<maxt2<<endl;
+    else cout<<maxt1<<endl;
+    return 0;
+}

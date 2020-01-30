@@ -1,0 +1,91 @@
+题目背景
+小 A 下载了一款运动软件。
+
+题目描述
+小 A 准备在接下来的 mm 天中锻炼，由于他不能走得太多以至于累死（怎么可能呢），所以他这 mm 天最多一共只能走 nn 步。
+这个运动软件为了激励小 A 走路，推出了 kk 种激励措施，每种激励措施都形如“如果你第 pp 天走完了 qq 步，那么第 pp 天中接下来的每一步都会给你加 11 积分”。激励措施可以叠加，即走一步你可能可以获得多于 11 积分。
+现在小 A 想知道，他最多可以获取多少积分呢？
+
+输入格式
+第一行三个整数 n,m,kn,m,k，意义如上。
+接下来 kk 行，每行两个整数 p,qp,q，表示一个激励措施，意义如上。
+
+输出格式
+一行 11 个整数，表示 mm 天后最多可以获得的积分。
+
+输入输出样例
+输入 #1 复制
+5 1 3
+1 0
+1 2
+1 4
+输出 #1 复制
+9
+说明/提示
+样例解释：
+只有一种方案，即在第一天走 55 步，第一、二步各获得 11 积分，第三、四步各获得 22 积分，第五步获得 33 积分，总计 99 积分。
+
+数据范围：
+对于 10\%10% 的数据，n,m,k\le10n,m,k≤10。
+对于 40\%40% 的数据，n,m,k \le 10^3n,m,k≤10 
+3
+ 。
+对于 100\%100% 的数据，1\le n\le 10^{12}1≤n≤10 
+12
+ ，1\le m,k\le 10^51≤m,k≤10 
+5
+ ，1\le p\le m1≤p≤m，0\le q\le n0≤q≤n。
+
+思路：模拟
+直接利用二维数组，按天数来遍历每天全走完的积分
+之后取每天积分的最大值即可
+（之前还写了DP后来发现有蹊跷。。。（由于他不能走得太多以至于累死（怎么可能呢））（滑稽））
+
+上代码：
+#include<iostream>
+#pragma warning(disable:4996)
+#include<cstring>
+#include<cstdio>
+#include<algorithm>
+#include <vector>
+#include <queue>
+#include <map>
+#include <math.h>
+typedef long long ll;
+typedef long double ld;
+using namespace std;
+#define INF 0x3f3f3f3f
+#define MOD 100000000
+#define debug() printf("Tairitsu Go PM!\n")
+const int mod = 1e9 + 7;
+inline long long read()
+{
+	long long x = 0; char s = getchar();
+	while (!isdigit(s))s = getchar();
+	while (isdigit(s))x = (x << 1) + (x << 3) + (s ^ 48), s = getchar();
+	return x;
+}//实现所有直接输入，可无视空格及回车
+inline void print(int x)
+{
+	if (x < 10)putchar(x + '0');
+	else {
+		print(x / 10);
+		putchar(x % 10 + '0');
+	}
+}//输出存在空格或回车需自行输出
+int main() {
+	long long n = read(), m = read(), k = read(), res = 0;
+	vector<vector<long long> > curr(200000);
+	for (long long i = 0; i < k; i++) {
+		long long p = read(), q = read();
+		curr[p].push_back(q);
+	}
+	for (long long i = 0; i < curr.size(); i++) {
+		long long score = 0;
+		for (long long j = 0; j < curr[i].size(); j++)
+			score += n - curr[i][j];
+		res = max(res, score);
+	}
+	cout << res;
+	return 0;
+}

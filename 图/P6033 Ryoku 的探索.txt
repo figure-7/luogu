@@ -1,0 +1,122 @@
+普及+/提高
+
+Ryoku 所处的世界可以抽象成一个有 nn 个点， nn 条边的带权无向连通图 GG。每条边有美观度和长度。
+
+Ryoku 会使用这样一个策略探索世界：在每个点寻找一个端点她未走过的边中美观度最高的走，如果没有边走，就沿着她前往这个点的边返回，类似于图的深度优先遍历。
+
+探索的一个方案的长度是这个方案所经过的所有边长度的和（返回时经过的长度不用计算）。
+
+她想知道，对于每一个起点 s=1,2,\cdots,ns=1,2,⋯,n，她需要走过的长度是多少？
+
+输入格式
+输入包含 n + 1n+1 行，其中第一行包含一个整数 nn。
+接下来 nn 行每行包含四个整数 u,v,w,pu,v,w,p，描述了一条连接 uu 和 vv，长度为 ww，美观度为 pp 的无向边。
+
+输出格式
+输出包含 nn 行，每行一个整数，第 ii 行为 s=is=i 时的答案。
+
+输入输出样例
+输入 #1 复制
+5
+4 1 2 1
+1 2 3 2
+3 1 1 4
+3 5 2 5
+2 3 2 3
+输出 #1 复制
+7
+7
+8
+7
+8
+说明/提示
+【样例 1 说明】
+
+以下为输入输出样例 1 中的图： （边上红色数组为 pp，黑色为 ww）
+
+
+
+若起点为 11，顺序为 1\to3\to5\to2\to41→3→5→2→4，长度之和为 77。
+若起点为 22，顺序为 2\to3\to5\to1\to42→3→5→1→4，长度之和为 77。
+若起点为 33，顺序为 3\to5\to1\to2\to43→5→1→2→4，长度之和为 88。
+若起点为 44，顺序为 4\to1\to3\to5\to24→1→3→5→2，长度之和为 77。
+若起点为 55，顺序为 5\to3\to1\to2\to45→3→1→2→4，长度之和为 88。
+
+【数据规模与约定】
+
+对于 40\%40% 的数据，n\le 10^3n≤10 
+3
+ 。
+对于 100\%100% 的数据，3 \le n \le 10^63≤n≤10 
+6
+ ，1 \le u,v,p \le n1≤u,v,p≤n，0\le w\le 10^90≤w≤10 
+9
+ ，保证 pp 互不相同。
+
+思路：图论
+接下来上题解区题解：
+显然图为一个基环树。
+
+拓扑排序找到环，对于环上的每一个点 小号小号 ，令 w_i w ^ 
+小号
+  为它在环上与它连接的美观度最小边的边权，每个点及其子树的答案即为所有边权之和减去 w_iw ^ 
+小号
+  。
+
+上代码：
+#include <bits/stdc++.h>
+
+typedef long long ll;
+
+const int kMaxN = 2e6 + 5;
+const int kInf = 0x3f3f3f3f;
+
+struct Edge {
+    int to, nxt, prf, val;
+} edges[kMaxN << 1];
+int head[kMaxN], deg[kMaxN], ans[kMaxN], cnt = 0, n;
+bool vis[kMaxN];
+ll tot = 0;
+void AddEdge(int u, int v, int w, int p) { edges[cnt] = (Edge) { v, head[u], p, w }; head[u] = cnt++; }
+void Topsort(int cur) {
+    vis[cur] = true;
+    for(int i = head[cur]; ~i; i = edges[i].nxt) {
+        int v = edges[i].to;
+        if(vis[v]) continue;
+        --deg[v];
+        if(deg[v] == 1)
+            Topsort(v);
+    }
+}
+void SetAns(int cur, int w) {
+    ans[cur] = w;
+    for(int i = head[cur]; ~i; i = edges[i].nxt)
+        if(vis[edges[i].to] && !ans[edges[i].to])
+            SetAns(edges[i].to, w);
+}
+
+int main() {
+    memset(head, 0xff, sizeof(head));
+    scanf("%d", &n);
+    for(int i = 1; i <= n; ++i) {
+        int u, v, p, w;
+        scanf("%d%d%d%d", &u, &v, &w, &p);
+        AddEdge(u, v, w, p);AddEdge(v, u, w, p);
+        ++deg[u]; ++deg[v];
+        tot += w;
+    }
+    for(int i = 1; i <= n; ++i) if(deg[i] == 1) Topsort(i);
+    for(int i = 1; i <= n; ++i)
+        if(!vis[i]) {
+            int minw, minprf = kInf;
+            for(int j = head[i]; ~j; j = edges[j].nxt)
+                if(!vis[edges[j].to] && edges[j].prf < minprf) {
+                    minprf = edges[j].prf;
+                    minw = edges[j].val;
+                }
+            SetAns(i, minw);
+        }
+    for(int i = 1; i <= n; ++i)
+        printf("%lld\n", tot - ans[i]);
+    return 0;
+}

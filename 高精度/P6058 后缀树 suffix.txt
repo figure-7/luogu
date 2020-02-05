@@ -1,0 +1,164 @@
+普及/提高-
+
+题目背景
+Eztsu 是一个可爱的女孩子，最近她学习了后缀树，并打算用它来解决如下问题。
+
+题目描述
+对于一个字符串 SS，我们定义 |S|∣S∣ 表示 SS 的长度。
+
+接着，我们定义 S_iS 
+i
+​	
+  表示 SS 中第 ii 个字符，S_{L...R}S 
+L...R
+​	
+  表示由 SS 中从左往右数，第 LL 个字符到第 RR 个字符依次连接形成的字符串。
+
+给定 nn，求有多少种不同的满足下列要求的串 SS：
+
+|S|=n∣S∣=n。
+SS 中仅包含小写字母。
+不存在整数 i \in [1,n)i∈[1,n) 使得 S_{1...i}S 
+1...i
+​	
+  是 S_{i+1...n}S 
+i+1...n
+​	
+  的子串。
+对于第三个限制，用通俗一点的说法解释的话，就是不存在一种将这个串分成两段的方式，使得前面一段是后面一段的子串。
+
+两个串 SS 和 TT 不同当且仅当 |S|\neq|T|∣S∣ 
+
+​	
+ =∣T∣ 或 \exists i \in [1,|S|] S_i \neq T_i∃i∈[1,∣S∣]S 
+i
+​	
+  
+
+​	
+ =T 
+i
+​	
+ 。如果你不知道这是什么意思，你可以理解为它们看起来不同。
+
+可怜的 Eztsu 不会做，所以你要帮她做这道题。
+
+答案可能很大，你只需要输出答案对 998244353998244353 取模的值。
+
+题面补充：
+
+SS 是 TT 的子串当且仅当存在 L,R \in [1,|T|]L,R∈[1,∣T∣] 使得 T_{L...R}=ST 
+L...R
+​	
+ =S.
+
+输入格式
+一行一个正整数 nn，意义见题目描述。
+
+输出格式
+一行一个整数，答案对 998244353998244353 取模的值。
+
+输入输出样例
+输入 #1 复制
+2
+输出 #1 复制
+650
+输入 #2 复制
+105383595
+输出 #2 复制
+114514
+说明/提示
+样例解释
+对于第一组样例，不难发现，这个串符合题意当且仅当两个字符不同，因此答案为 26 \times 26 - 2626×26−26，可以理解为两个字符任意的方案数减去两个字符相同的方案数。
+
+数据范围
+「本题采用捆绑测试」
+
+对于所有测试点，保证 1 \leq n \leq 10^91≤n≤10 
+9
+ 。
+
+\text{Subtask 1 (17 pts)}Subtask 1 (17 pts) n \leq 4n≤4。
+
+\text{Subtask 2 (78 pts)}Subtask 2 (78 pts) n \leq 2\times 10^3n≤2×10 
+3
+ 。
+
+\text{Subtask 3 (5 pts)}Subtask 3 (5 pts) 没有特殊限制。
+
+提示
+小写字母一共有 2626 个。
+
+Subtask 1
+暴力
+
+Subtask 2
+注意到，对于任意 i>1i>1 ， S_{1...i}S 
+1...i
+​	  是 S_{i+1...n}S 
+i+1...n
+​	  的子串，则 S_{1...i-1}S 
+1...i−1
+​	  必然为 S_{i...n}S 
+i...n
+​	  的子串。因此，原限制等价于第一个字符不能在后面出现过。答案为 26\times 25^{n-1}26×25 
+n−1
+  。如果你不会快速幂，那么你可以得到出题人慷慨送给你的这 7878 分。
+
+Subtask 3
+快速幂即可。
+
+上代码：
+#include<iostream>
+#pragma warning(disable:4996)
+#include<cstring>
+#include<cstdio>
+#include<algorithm>
+#include <vector>
+#include <queue>
+#include <map>
+#include <math.h>
+#include<fstream>
+#include<cmath>
+typedef long long ll;
+typedef unsigned long long ull;
+typedef long double ld;
+using namespace std;
+#define Set(a) memset(a,0,sizeof(a))
+#define F(i,a,b) for(register int i=a,i##end=b;i<=i##end;++i)
+#define UF(i,a,b) for(register int i=a,i##end=b;i>=i##end;--i)
+#define openf(a) freopen(#a".in","r",stdin);freopen(#a".out","w",stdout)
+#define re register
+#define ri re int
+#define il inline
+#define INF 0x3f3f3f3f
+#define MOD 100000000
+#define debug() printf("Tairitsu Go PM!\n")
+template<typename T> inline T rd(T& x)
+{
+	T f = 1; x = 0; char c = getchar();
+	for (; !isdigit(c); c = getchar()) if (c == '-') f = -1;
+	for (; isdigit(c); c = getchar()) x = (x << 3) + (x << 1) + (T)(c - '0');
+	x *= f;
+	return x;
+}
+ll rd() { ll x; rd(x); return x; }
+inline int max(int a, int b) { return a > b ? a : b; }
+inline int min(int a, int b) { return a < b ? a : b; }
+const int inf = 1 << 30;
+
+struct thing { int id; ll w, p; }a[200005];
+bool operator<(thing a, thing b) { return a.w * (10000 - b.p) < b.w * (10000 - a.p); }
+int n;
+const int mod = 998244353;
+int qpow(int a, int b) {
+	if (b == 0)return 1;
+	ll d = qpow(a, b >> 1); d = d * d % mod;
+	if (b & 1)d = d * a % mod;
+	return d;
+}
+int main() {
+	scanf("%d", &n);
+	printf("%d", (ll)26 * qpow(25, n - 1) % mod);
+	return 0;
+}

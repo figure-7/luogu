@@ -1,0 +1,197 @@
+题目背景
+zbw 在 B 城游走。
+
+题目描述
+B 城可以看作一个有 nn 个点 mm 条边的有向无环图。
+
+注意，可能存在重边。
+
+zbw 在 B 城随机游走，他会随机选择一条路径。
+
+注意：单独的一个点也可以视为一条路径，选择所有路径的概率相等。
+
+定义一条路径的长度为经过的边数，你需要求出 zbw 走的路径长度的期望，答案对 998244353998244353 取模。
+
+输入格式
+第一行两个整数 n,mn,m。
+
+接下来 mm 行，每行两个整数 x,yx,y，表示存在一条从 xx 到 yy 的有向边。
+
+输出格式
+一行一个整数，表示答案对 998244353998244353 取模后的值。
+
+输入输出样例
+输入 #1 复制
+3 2
+1 2
+3 2
+输出 #1 复制
+199648871
+输入 #2 复制
+6 5
+1 3
+2 3
+3 4
+4 5
+4 6
+输出 #2 复制
+630470119
+输入 #3 复制
+5 6
+1 2
+1 3
+4 5
+3 4
+3 5
+2 4
+输出 #3 复制
+887328315
+说明/提示
+样例说明：样例的答案分别为 \dfrac{2}{5} 
+5
+2
+​	
+ ，\dfrac{25}{19} 
+19
+25
+​	
+  和 \dfrac{11}{9} 
+9
+11
+​	
+ 。
+
+测试点编号	nn	mm	特殊性质	每测试点分数
+1,21,2	\le 10≤10	\le 10≤10	无	22
+3,4,53,4,5	\le 15≤15	\le 100≤100	无	22
+6,7,86,7,8	\le 100≤100	\le 10^3≤10 
+3
+ 	无	22
+9,109,10	\le 10^3≤10 
+3
+ 	\le 10^4≤10 
+4
+ 	无	22
+11,1211,12	\le 10^4≤10 
+4
+ 	\le 10^5≤10 
+5
+ 	无	55
+13\sim1413∼14	\le 10^5≤10 
+5
+ 	\le 7\times10^5≤7×10 
+5
+ 	无	55
+15\sim1615∼16	\le 10^5≤10 
+5
+ 	\le 7\times10^5≤7×10 
+5
+ 	无	1010
+1717	\le 10≤10	=n-1=n−1	有向树	1010
+1818	\le 10^3≤10 
+3
+ 	=n-1=n−1	有向树	1010
+1919	\le 10^4≤10 
+4
+ 	=n-1=n−1	有向树	1010
+2020	\le 10^5≤10 
+5
+ 	=n-1=n−1	有向树	1010
+其中，“有向树”的定义是：不存在环，且任意两点间至多存在一条路径的有向图（如样例 22）。
+
+思路：题意:给定一个有向无环图，求其中一条路径长度的期望。
+
+一条路径长度的期望 == \dfrac{sum}{cnt} 
+cnt
+sum
+​	  。
+
+其中 sumsum 代表所有路径长度的总和， cntcnt 代表路径的个数。
+
+记忆化搜索，令 f_if 
+i
+​	  表示从 ii 开始的路径长度和， g_ig 
+i
+​	  表示从 ii 开始的路径条数。
+
+则 f_i=\sum\limits_{edge(i,j)}f_j+g_jf 
+i
+​	 = 
+edge(i,j)
+∑
+​	 f 
+j
+​	 +g 
+j
+​	  （每条路径都变长 11 ）
+
+g_i=1+\sum\limits_{edge(i,j)}g_jg 
+i
+​	 =1+ 
+edge(i,j)
+∑
+​	 g 
+j
+​	  （所有路径加上自己到自己）
+
+答案即为 \dfrac{\sum f_i}{\sum g_i} 
+∑g 
+i
+​	 
+∑f 
+i
+​	 
+​	  。
+
+上代码：
+//100 points
+#include<iostream>
+#include<cstdio>
+#include<algorithm>
+#include<cstring>
+#include<cmath>
+#pragma warning(disable:4996)
+#define mod 998244353ll
+using namespace std;
+struct Edge {
+	int to, next;
+}e[700005];
+int cnt, h[100005], n, m;
+long long f[100005], g[100005], s1, s2;
+//f:路径长度和
+//g:路径数
+void Add_Edge(int x, int y) {
+	e[++cnt].to = y;
+	e[cnt].next = h[x];
+	h[x] = cnt;
+}
+void DP(int now) {
+	if (g[now])return;
+	g[now] = 1;
+	for (int i = h[now]; i; i = e[i].next) {
+		int y = e[i].to;
+		DP(y);
+		(g[now] += g[y]) %= mod;
+		(f[now] += f[y] + g[y]) %= mod;
+	}
+}
+long long Power(long long x, long long y, long long z) {
+	long long ret = 1;
+	while (y) {
+		if (y & 1)ret = ret * x % z;
+		y >>= 1;
+		x = x * x % z;
+	}
+	return ret;
+}
+int main() {
+	scanf("%d%d", &n, &m);
+	for (int i = 1, x, y; i <= m; i++) {
+		scanf("%d%d", &x, &y);
+		Add_Edge(x, y);
+	}
+	for (int i = 1; i <= n; i++)if (!g[i])DP(i);
+	for (int i = 1; i <= n; i++)(s1 += f[i]) %= mod, (s2 += g[i]) %= mod;
+	printf("%lld\n", s1 * Power(s2, mod - 2, mod) % mod);
+	return 0;
+}
